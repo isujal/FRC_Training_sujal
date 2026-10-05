@@ -59,7 +59,17 @@ private final SendableChooser<Command> autoChooser;
         configureBindings();
     }
 
-    private void registerNamedCommands() { /* filled in Phase 5 */ }
+    private void registerNamedCommands() {
+        
+            NamedCommands.registerCommand("IntakeOn",    traced("IntakeOn",    new IntakeCommand(intake)));
+
+     }
+
+     /** Prints when a step starts and ends, and whether something cancelled it. */
+private static Command traced(String name, Command c) {
+    return c.beforeStarting(() -> System.out.println("[AUTO] start " + name))
+            .finallyDo(interrupted -> System.out.println("[AUTO] end   " + name + (interrupted ? " (cancelled)" : "")));
+}
 public Command getAutonomousCommand() {
     return autoChooser.getSelected();              // replaces the template drive-forward
 }
@@ -117,6 +127,8 @@ public Command getAutonomousCommand() {
         //         intake.stopMotor();;
         //     }
         // }, intake));  
+
+        
     
         joystick.rightBumper().whileTrue(new IntakeCommand(intake));    // --will do the test once teleop testing for subsystem is done 
 

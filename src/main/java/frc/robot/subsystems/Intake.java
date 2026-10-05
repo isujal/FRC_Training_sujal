@@ -22,6 +22,7 @@ public class Intake extends SubsystemBase {
     public static final double kMaxAngleDeg    = 120.0;   // fully deployed
     public static final double kDeployAngleDeg = 120.0;
     public static final double testAngle = 10;
+    public static final double randomAngle = -20;
     public static final double kStowAngleDeg   = 5.0;     // a few degrees off the hard stop
     public static final double kRollerVolts    = 9.0;     // peak duty 0.8 caps output at 9.6 V
 
@@ -146,23 +147,27 @@ public class Intake extends SubsystemBase {
 
     // ─── Elbow Actions (MotionMagic Position) ───────────────────────────────
 
-
-    public void setIntakePosition(double position) {
-        m_targetPos = position;
+    public void setIntakePosition(double degrees) {
+        degrees = MathUtil.clamp(degrees, kMinAngleDeg, kMaxAngleDeg);   // safety limits
+        m_targetPos = degToRot(degrees);                                  // degrees → motor rotations
         intakeMotor.setControl(m_motionMagicRequest.withPosition(m_targetPos).withSlot(0));
     }
 
-    public void incrementPosition(double rotations) {
-        double currentPOS    = intakeMotor.getPosition().getValueAsDouble();
-        double incrementPOS  = currentPOS + rotations;
-        intakeMotor.setControl(m_motionMagicRequest.withPosition(incrementPOS).withSlot(0));
-    }
+    public void incrementPosition(double degrees) { setIntakePosition(m_targetPos * 360.0 / kElbowGearRatio + degrees); }
+    public void decrementPosition(double degrees) { setIntakePosition(m_targetPos * 360.0 / kElbowGearRatio - degrees); }
 
-    public void decrementPosition(double rotations) {
-        double currentPOS   = intakeMotor.getPosition().getValueAsDouble();
-        double decrementPOS = currentPOS - rotations;
-        intakeMotor.setControl(m_motionMagicRequest.withPosition(decrementPOS).withSlot(0));
-    }
+
+    // public void incrementPosition(double rotations) {
+    //     double currentPOS    = intakeMotor.getPosition().getValueAsDouble();
+    //     double incrementPOS  = currentPOS + rotations;
+    //     intakeMotor.setControl(m_motionMagicRequest.withPosition(incrementPOS).withSlot(0));
+    // }
+
+    // public void decrementPosition(double rotations) {
+    //     double currentPOS   = intakeMotor.getPosition().getValueAsDouble();
+    //     double decrementPOS = currentPOS - rotations;
+    //     intakeMotor.setControl(m_motionMagicRequest.withPosition(decrementPOS).withSlot(0));
+    // }
 
     public void intakeMotorZero() {
         intakeMotor.setPosition(0);
