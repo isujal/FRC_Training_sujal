@@ -108,17 +108,17 @@ public Command getAutonomousCommand() {
         joystick.povUp().onTrue(new  InstantCommand(()-> intake.incrementPosition(5),intake));
         joystick.povDown().onTrue(new  InstantCommand(()-> intake.decrementPosition(5),intake));
         // toggle logic 
-        joystick.rightBumper().onTrue(new InstantCommand(() -> {
-            motor2Running = !motor2Running;
-            if (motor2Running) {
-                intake.IntakeRollerRPM(60);
-            }
-            else {
-                intake.stopMotor();;
-            }
-        }, intake));  
+        // joystick.rightBumper().onTrue(new InstantCommand(() -> {
+        //     motor2Running = !motor2Running;
+        //     if (motor2Running) {
+        //         intake.IntakeRollerRPM(60);
+        //     }
+        //     else {
+        //         intake.stopMotor();;
+        //     }
+        // }, intake));  
     
-        // joystick.rightBumper().whileTrue(new IntakeCommand(intake));    // --will do the test once teleop testing for subsystem is done 
+        joystick.rightBumper().whileTrue(new IntakeCommand(intake));    // --will do the test once teleop testing for subsystem is done 
 
 
         // ── Motor 1 (MotionMagic Position) ────────────────────────────────────

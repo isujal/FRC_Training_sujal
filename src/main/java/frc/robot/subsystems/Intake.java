@@ -21,7 +21,7 @@ public class Intake extends SubsystemBase {
     public static final double kMinAngleDeg    = 0.0;     // where the elbow sits at power-on
     public static final double kMaxAngleDeg    = 120.0;   // fully deployed
     public static final double kDeployAngleDeg = 120.0;
-    public static final double testAngle = 40;
+    public static final double testAngle = 10;
     public static final double kStowAngleDeg   = 5.0;     // a few degrees off the hard stop
     public static final double kRollerVolts    = 9.0;     // peak duty 0.8 caps output at 9.6 V
 
@@ -82,8 +82,8 @@ public class Intake extends SubsystemBase {
 
         cfg.MotorOutput.NeutralMode          = NeutralModeValue.Brake;
         cfg.MotorOutput.Inverted             = InvertedValue.Clockwise_Positive;
-        cfg.MotorOutput.PeakForwardDutyCycle =  0.6;
-        cfg.MotorOutput.PeakReverseDutyCycle = -0.6;
+        cfg.MotorOutput.PeakForwardDutyCycle =  1;
+        cfg.MotorOutput.PeakReverseDutyCycle = -1;
 
         cfg.Slot0.kP = 1.0;
         cfg.Slot0.kI = 0.0;
@@ -92,9 +92,9 @@ public class Intake extends SubsystemBase {
         cfg.Slot0.kS = 0.0;
         cfg.Slot0.kG = 0.0;
 
-        cfg.MotionMagic.withMotionMagicAcceleration(50)
+        cfg.MotionMagic.withMotionMagicAcceleration(100)
                        .withMotionMagicCruiseVelocity(100)
-                       .withMotionMagicJerk(1000);
+                       .withMotionMagicJerk(3000);
 
         cfg.SoftwareLimitSwitch.ForwardSoftLimitEnable    = false;
         cfg.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 50.0;
@@ -181,7 +181,7 @@ public class Intake extends SubsystemBase {
     // ─── Motor 2 Actions (VelocityVoltage) ────────────────────────────────────
 
     public void IntakeRollerRPM(double RPM) {
-        leftRoller.setControl(m_velocityVoltageRequest.withVelocity(RPM/60).withSlot(0));
+        leftRoller.setControl(m_velocityVoltageRequest.withVelocity(RPM).withSlot(0));
     }
 
     public void stopMotor() {
