@@ -185,7 +185,7 @@ public class Intake extends SubsystemBase {
 
     // ─── Motor 2 Actions (VelocityVoltage) ────────────────────────────────────
 
-    public void IntakeRollerRPM(double RPM) {
+    public void setIntakeRollerRPM(double RPM) {
         leftRoller.setControl(m_velocityVoltageRequest.withVelocity(RPM).withSlot(0));
     }
 

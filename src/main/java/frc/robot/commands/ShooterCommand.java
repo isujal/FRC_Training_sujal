@@ -3,20 +3,21 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
 
-public class ElbowCommand extends Command {
+public class ShooterCommand extends Command {
 
-    private final Intake m_intake;
+    private final Shooter shooter;
 
-    public ElbowCommand(Intake intake) {
-        m_intake = intake;
-        addRequirements(intake);
+    public ShooterCommand(Shooter shooter) {
+        this.shooter = shooter;
+        addRequirements(shooter);
     }
 
     @Override
     public void initialize() {
-
-        m_intake.setIntakePosition(Intake.randomAngle);
+        shooter.setShooterRPM(shooter.shooterRPM);
+        shooter.setHoodPosition(shooter.testHoodPos);
     }
 
     @Override
@@ -26,7 +27,8 @@ public class ElbowCommand extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        m_intake.setIntakePosition(Intake.kStowAngleDeg);
+        shooter.stopShooter();
+        shooter.setHoodPosition(0);
     }
 
     @Override

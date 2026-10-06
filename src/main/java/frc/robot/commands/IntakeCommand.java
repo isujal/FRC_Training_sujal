@@ -6,18 +6,18 @@ import frc.robot.subsystems.Intake;
 
 public class IntakeCommand extends Command {
 
-    private final Intake m_intake;
+    public final Intake intake;
 
     public IntakeCommand(Intake intake) {
-        m_intake = intake;
+        this.intake = intake;
         addRequirements(intake);
     }
 
     @Override
     public void initialize() {
 
-        m_intake.setIntakePosition(Intake.testAngle);
-        m_intake.IntakeRollerRPM(80);
+        intake.setIntakePosition(Intake.testAngle);
+        intake.setIntakeRollerRPM(80);
     }
 
     @Override
@@ -27,8 +27,8 @@ public class IntakeCommand extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        m_intake.stopMotor();
-        m_intake.setIntakePosition(Intake.kStowAngleDeg);
+        intake.stopMotor();
+        intake.setIntakePosition(Intake.kStowAngleDeg);
     }
 
     @Override

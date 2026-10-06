@@ -17,33 +17,52 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.commands.FeederCommand;
 import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.ShooterCommand;
 // import frc.robot.commands.Basic_Command;
 import frc.robot.generated.TunerConstants;
 // import frc.robot.subsystems.Basic_Subsystem;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
+
+import com.pathplanner.lib.util.PathPlannerLogging;
+
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.geometry.Translation2d;
+import frc.robot.Constants.DriveConstants;
+
 public class RobotContainer {
     // private final Basic_Subsystem m_subsystem = new Basic_Subsystem();
     public boolean motor2Running = false;
     
     private final Intake intake = new Intake();
+    private final Indexer indexer = new Indexer();
+    private final Shooter shooter = new Shooter();
 
     private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
+    private final SlewRateLimiter xLimiter = new SlewRateLimiter(DriveConstants.kTranslationSlewRate);
+private final SlewRateLimiter yLimiter = new SlewRateLimiter(DriveConstants.kTranslationSlewRate);
+private boolean slowMode = false;
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
@@ -51,6 +70,7 @@ public class RobotContainer {
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 private final SendableChooser<Command> autoChooser;
+private final Field2d field = new Field2d();
 
     public RobotContainer() {
         registerNamedCommands();                       // 1) register names first
@@ -79,14 +99,22 @@ public Command getAutonomousCommand() {
 
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
-        drivetrain.setDefaultCommand(
-            // Drivetrain will execute this command periodically
-            drivetrain.applyRequest(() ->
-                drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-                    .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                    .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
-            )
-        );
+drivetrain.setDefaultCommand(
+    drivetrain.applyRequest(() -> {
+        Translation2d v = driverVelocity();
+        double scale = slowMode ? DriveConstants.kSlowModeScale : 1.0;
+        return drive
+            .withVelocityX(xLimiter.calculate(v.getX()))
+            .withVelocityY(yLimiter.calculate(v.getY()))
+            .withRotationalRate(shapeAxis(-joystick.getRightX()) * MaxAngularRate * scale);
+    }).beforeStarting(() -> {
+        // Start the limiters at the current stick value so the robot doesn't
+        // lurch when this command resumes after brake, heading lock, etc.
+        Translation2d v = driverVelocity();
+        xLimiter.reset(v.getX());
+        yLimiter.reset(v.getY());
+    })
+);
 
         // Idle while the robot is disabled. This ensures the configured
         // neutral mode is applied to the drive motors while disabled.
@@ -107,9 +135,14 @@ public Command getAutonomousCommand() {
         joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
         joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
         joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
-
+joystick.leftTrigger().whileTrue(
+    Commands.startEnd(() -> slowMode = true, () -> slowMode = false));
         // Reset the field-centric heading on left bumper press.
-        joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+
+
+        joystick.rightTrigger().whileTrue(new FeederCommand(indexer, 6000, 4200));
+
+        // joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
@@ -128,9 +161,10 @@ public Command getAutonomousCommand() {
         //     }
         // }, intake));  
 
-        
+           
     
-        joystick.rightBumper().whileTrue(new IntakeCommand(intake));    // --will do the test once teleop testing for subsystem is done 
+        joystick.leftBumper().whileTrue(new IntakeCommand(intake));    // --will do the test once teleop testing for subsystem is done 
+        joystick.rightBumper().toggleOnTrue(new ShooterCommand(shooter));    // --will do the test once teleop testing for subsystem is done 
 
 
         // ── Motor 1 (MotionMagic Position) ────────────────────────────────────
@@ -170,11 +204,43 @@ public Command getAutonomousCommand() {
 //         m_subsystem.stopMotor2();
 //     }
 // }, m_subsystem));
-    
+    SmartDashboard.putData("Field", field);
+PathPlannerLogging.setLogActivePathCallback(poses -> field.getObject("path").setPoses(poses));
+PathPlannerLogging.setLogTargetPoseCallback(pose -> field.getObject("target").setPose(pose));
 
 
 
     }
+
+    /** Stick (-1..1 each) to a vector of magnitude 0..1: circular deadband + squared curve. */
+private static Translation2d shapeStick(double x, double y) {
+    double db = DriveConstants.kStickDeadband;
+    double mag = Math.hypot(x, y);
+    if (mag < db) {
+        return new Translation2d();
+    }
+    double scaled = MathUtil.clamp((mag - db) / (1.0 - db), 0.0, 1.0);
+    scaled = scaled * scaled;
+    return new Translation2d(x / mag * scaled, y / mag * scaled);
+}
+
+/** Single axis (rotation): deadband + squared curve, keeping the sign. */
+private static double shapeAxis(double v) {
+    v = MathUtil.applyDeadband(v, DriveConstants.kStickDeadband);
+    return Math.copySign(v * v, v);
+}
+
+/** Driver's requested field velocity in m/s, before the slew limiter. */
+private Translation2d driverVelocity() {
+    double scale = slowMode ? DriveConstants.kSlowModeScale : 1.0;
+    // WPILib: stick forward is negative Y, stick left is negative X
+    return shapeStick(-joystick.getLeftY(), -joystick.getLeftX()).times(MaxSpeed * scale);
+}
+
+    /** Call every loop so the dashboard shows the live robot pose. */
+public void updateField() {
+    field.setRobotPose(drivetrain.getState().Pose);
+}
 
     // public Command getAutonomousCommand() {
     //     // Simple drive forward auton
