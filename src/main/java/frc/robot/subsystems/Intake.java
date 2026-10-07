@@ -81,7 +81,7 @@ public class Intake extends SubsystemBase {
     private void configureIM() {
         TalonFXConfiguration cfg = new TalonFXConfiguration();
 
-        cfg.MotorOutput.NeutralMode          = NeutralModeValue.Brake;
+        cfg.MotorOutput.NeutralMode          = NeutralModeValue.Coast;
         cfg.MotorOutput.Inverted             = InvertedValue.Clockwise_Positive;
         cfg.MotorOutput.PeakForwardDutyCycle =  1;
         cfg.MotorOutput.PeakReverseDutyCycle = -1;

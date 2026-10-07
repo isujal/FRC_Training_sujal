@@ -47,13 +47,13 @@ import frc.robot.Constants.DriveConstants;
 public class RobotContainer {
     // private final Basic_Subsystem m_subsystem = new Basic_Subsystem();
     public boolean motor2Running = false;
-    
+    private double speed = 0.2;
     private final Intake intake = new Intake();
     private final Indexer indexer = new Indexer();
     private final Shooter shooter = new Shooter();
 
-    private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
-    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
+    private double MaxSpeed =  speed * 1* TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed1
+    private double MaxAngularRate = speed* RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -85,11 +85,17 @@ private final Field2d field = new Field2d();
 
      }
 
-     /** Prints when a step starts and ends, and whether something cancelled it. */
 private static Command traced(String name, Command c) {
-    return c.beforeStarting(() -> System.out.println("[AUTO] start " + name))
-            .finallyDo(interrupted -> System.out.println("[AUTO] end   " + name + (interrupted ? " (cancelled)" : "")));
+    return c.beforeStarting(() -> {
+                System.out.println("[AUTO] start " + name);
+                SmartDashboard.putBoolean("Auto/" + name + " running", true);
+            })
+            .finallyDo(interrupted -> {
+                System.out.println("[AUTO] end   " + name + (interrupted ? " (cancelled)" : ""));
+                SmartDashboard.putBoolean("Auto/" + name + " running", false);
+            });
 }
+
 public Command getAutonomousCommand() {
     return autoChooser.getSelected();              // replaces the template drive-forward
 }
@@ -142,7 +148,7 @@ joystick.leftTrigger().whileTrue(
 
         
 
-        // joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+        joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
@@ -163,7 +169,7 @@ joystick.leftTrigger().whileTrue(
 
            
     
-        joystick.leftBumper().toggleOnTrue(new IntakeCommand(intake));   
+        // joystick.leftBumper().toggleOnTrue(new IntakeCommand(intake));   
         joystick.rightBumper().toggleOnTrue(new ShooterCommand(shooter));   
         joystick.y().toggleOnTrue(new FeederCommand(indexer, 6000, 4200));
 
