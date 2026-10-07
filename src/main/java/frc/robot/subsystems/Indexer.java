@@ -25,11 +25,6 @@ public class Indexer extends SubsystemBase {
 private double indexerTargetRPM = 0.0;
 private double feederTargetRPM = 0.0;
 
-    private double HoodGearRatio = 60.8417;
-    public boolean HoodReset = false;
-    private static final double HOOD_MIN_DEG = 0.0;
-    private static final double HOOD_MAX_DEG = 38.0;
-
     public Indexer(){
         configureIndexer();
         configureFeeder();
@@ -45,12 +40,12 @@ private double feederTargetRPM = 0.0;
         cfg.MotorOutput.PeakForwardDutyCycle =  0.8;
         cfg.MotorOutput.PeakReverseDutyCycle = -0.8;
 
-        cfg.Slot0.kP = 0.8;
+        cfg.Slot0.kP = 0.1;
         cfg.Slot0.kI = 0.0;
         cfg.Slot0.kD = 0.0;
-        cfg.Slot0.kV = 0.095;
-        cfg.Slot0.kS = 0.25;
-        cfg.Slot0.kA = 0.09;
+        cfg.Slot0.kV = 0.0;
+        cfg.Slot0.kS = 0.0;
+        cfg.Slot0.kA = 0.0;
 
         cfg.CurrentLimits.StatorCurrentLimit = 80;
         cfg.CurrentLimits.StatorCurrentLimitEnable = true;
@@ -75,12 +70,12 @@ private double feederTargetRPM = 0.0;
         cfg.MotorOutput.PeakForwardDutyCycle =  0.8;
         cfg.MotorOutput.PeakReverseDutyCycle = -0.8;
 
-        cfg.Slot0.kP = 0.8;
+        cfg.Slot0.kP = 0.1;
         cfg.Slot0.kI = 0.0;
         cfg.Slot0.kD = 0.0;
-        cfg.Slot0.kV = 0.11;
-        cfg.Slot0.kS = 0.25;
-        cfg.Slot0.kA = 0.08;
+        cfg.Slot0.kV = 0.0;
+        cfg.Slot0.kS = 0.0;
+        cfg.Slot0.kA = 0.0;
 
         cfg.CurrentLimits.StatorCurrentLimit = 80;
         cfg.CurrentLimits.StatorCurrentLimitEnable = true;

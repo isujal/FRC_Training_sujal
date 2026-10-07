@@ -21,7 +21,7 @@ public class Intake extends SubsystemBase {
     public static final double kMinAngleDeg    = 0.0;     // where the elbow sits at power-on
     public static final double kMaxAngleDeg    = 120.0;   // fully deployed
     public static final double kDeployAngleDeg = 120.0;
-    public static final double testAngle = 10;
+    public static final double testAngle = 100;
     public static final double randomAngle = -20;
     public static final double kStowAngleDeg   = 5.0;     // a few degrees off the hard stop
     public static final double kRollerVolts    = 9.0;     // peak duty 0.8 caps output at 9.6 V

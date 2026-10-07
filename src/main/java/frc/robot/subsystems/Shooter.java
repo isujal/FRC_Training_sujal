@@ -28,11 +28,11 @@ public class Shooter extends SubsystemBase {
     private double rightTargetRPM = 0.0;
 
     public double shooterRPM = 500;
-    public double testHoodPos = 10;
+    public double testHoodPos = 15;
 
     private double HoodGearRatio = 60.8417;
     public boolean HoodReset = false;
-    private static final double HOOD_MIN_DEG = 0.0;
+    private static final double HOOD_MIN_DEG = 5.0;
     private static final double HOOD_MAX_DEG = 38.0;
 
 

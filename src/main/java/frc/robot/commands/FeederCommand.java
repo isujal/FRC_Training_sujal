@@ -25,7 +25,7 @@ public class FeederCommand extends Command {
 
     @Override
     public void execute() {
-        // nothing per-loop: the motors hold the velocity request we sent in initialize()
+        
     }
 
     @Override

@@ -131,23 +131,23 @@ drivetrain.setDefaultCommand(
         
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
-        joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        // joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+        // joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+        // joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+        // joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 joystick.leftTrigger().whileTrue(
     Commands.startEnd(() -> slowMode = true, () -> slowMode = false));
         // Reset the field-centric heading on left bumper press.
 
 
-        joystick.rightTrigger().whileTrue(new FeederCommand(indexer, 6000, 4200));
+        
 
         // joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
-        joystick.povLeft().onTrue(new  InstantCommand(()-> intake.setIntakePosition(10),intake));
-        joystick.povRight().onTrue(new  InstantCommand(()-> intake.setIntakePosition(0),intake));
+        joystick.povLeft().onTrue(new  InstantCommand(()-> shooter.incrementHood(0.8),shooter));
+        joystick.povRight().onTrue(new  InstantCommand(()->  shooter.decrementHood(0.8),shooter));
         joystick.povUp().onTrue(new  InstantCommand(()-> intake.incrementPosition(5),intake));
         joystick.povDown().onTrue(new  InstantCommand(()-> intake.decrementPosition(5),intake));
         // toggle logic 
@@ -163,9 +163,9 @@ joystick.leftTrigger().whileTrue(
 
            
     
-        joystick.leftBumper().whileTrue(new IntakeCommand(intake));    // --will do the test once teleop testing for subsystem is done 
-        joystick.rightBumper().toggleOnTrue(new ShooterCommand(shooter));    // --will do the test once teleop testing for subsystem is done 
-
+        joystick.leftBumper().toggleOnTrue(new IntakeCommand(intake));   
+        joystick.rightBumper().toggleOnTrue(new ShooterCommand(shooter));   
+        joystick.y().toggleOnTrue(new FeederCommand(indexer, 6000, 4200));
 
         // ── Motor 1 (MotionMagic Position) ────────────────────────────────────
 
