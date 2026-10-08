@@ -87,6 +87,8 @@ public class RobotContainer {
         NamedCommands.registerCommand("Intake Off", traced("Intake Off", new InstantCommand(() -> intake.stopMotor())));
         NamedCommands.registerCommand("FeederOn", traced("FeederOn", new InstantCommand(() -> indexer.setIndexerRPM(6000)).alongWith(new InstantCommand(()-> indexer.setFeederRPM(4200)))) 
         );
+        NamedCommands.registerCommand("FeederOff", traced("FeederOff", new InstantCommand(() -> indexer.stopFeeder())));
+        
         NamedCommands.registerCommand("Shooter Command", traced("Shooter Command", new ShooterCommand(shooter)));
 
     }
