@@ -8,7 +8,7 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.269717945883466,
+        "x": 2.0,
         "y": 1.0
       },
       "isLocked": false,
@@ -20,18 +20,30 @@
         "y": 1.0
       },
       "prevControl": {
-        "x": 2.75,
+        "x": 2.0,
         "y": 1.0
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "side 1 end"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "Shooter Command",
+      "waypointRelativePos": 0.25287769784172665,
+      "endWaypointRelativePos": 0.7852517985611469,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Shooter Command"
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 1.0,
     "maxAcceleration": 1.0,
@@ -42,10 +54,10 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": 0.0
   },
   "reversed": false,
-  "folder": "square",
+  "folder": null,
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0

@@ -1,0 +1,62 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "simple intake test 1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "simple intake test 2"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeOn"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "FeederOn"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shooter Command"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 2.0
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "path 3 "
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

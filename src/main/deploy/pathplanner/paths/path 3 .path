@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.269717945883466,
-        "y": 1.0
+        "x": 1.0,
+        "y": 1.2858260334518419
       },
       "isLocked": false,
-      "linkedName": "side 1 start "
+      "linkedName": "intake test start"
     },
     {
       "anchor": {
-        "x": 3.0,
-        "y": 1.0
+        "x": 1.0,
+        "y": 1.5
       },
       "prevControl": {
-        "x": 2.75,
-        "y": 1.0
+        "x": 1.0,
+        "y": 1.25
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "side 1 end"
+      "linkedName": "path 3 end"
     }
   ],
   "rotationTargets": [],
@@ -42,10 +42,10 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": 0.0
   },
   "reversed": false,
-  "folder": "square",
+  "folder": null,
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0
