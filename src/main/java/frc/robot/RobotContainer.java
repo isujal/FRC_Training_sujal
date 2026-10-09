@@ -50,8 +50,8 @@ public class RobotContainer {
     private final Indexer indexer = new Indexer();
     private final Shooter shooter = new Shooter();
 
-    private double MaxSpeed = speed * 1 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired
-                                                                                              // top speed1
+    private double MaxSpeed = 0.1 * 1 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired
+                                                                                            // top speed1
     private double MaxAngularRate = speed * RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per
                                                                                               // second max angular
                                                                                               // velocity
@@ -82,13 +82,19 @@ public class RobotContainer {
 
     private void registerNamedCommands() {
 
-        NamedCommands.registerCommand("IntakeOn", traced("IntakeOn", new InstantCommand(() -> intake.setIntakeRollerRPM(80)).alongWith(new InstantCommand(()-> intake.setIntakePosition(135)))) 
-        );
+        NamedCommands.registerCommand("IntakeOn",
+                traced("IntakeOn", new InstantCommand(() -> intake.setIntakeRollerRPM(300))
+                        .alongWith(new InstantCommand(() -> intake.setIntakePosition(135)))));
+        NamedCommands.registerCommand("IntakeTransfer",
+                traced("IntakeTransfer", new InstantCommand(() -> intake.setIntakeRollerRPM(300))
+                        .alongWith(new InstantCommand(() -> intake.setIntakePosition(45)))));
         NamedCommands.registerCommand("Intake Off", traced("Intake Off", new InstantCommand(() -> intake.stopMotor())));
-        NamedCommands.registerCommand("FeederOn", traced("FeederOn", new InstantCommand(() -> indexer.setIndexerRPM(6000)).alongWith(new InstantCommand(()-> indexer.setFeederRPM(4200)))) 
-        );
-        NamedCommands.registerCommand("FeederOff", traced("FeederOff", new InstantCommand(() -> indexer.stopFeeder())));
-        
+        NamedCommands.registerCommand("FeederOn",
+                traced("FeederOn", new InstantCommand(() -> indexer.setIndexerRPM(6000))
+                        .alongWith(new InstantCommand(() -> indexer.setFeederRPM(4200)))));
+        NamedCommands.registerCommand("FeederOff", traced("FeederOff", new InstantCommand(() -> indexer.stopFeeder())
+                .alongWith(new InstantCommand(() -> indexer.stopIndexer()))));
+
         NamedCommands.registerCommand("Shooter Command", traced("Shooter Command", new ShooterCommand(shooter)));
 
     }
@@ -152,8 +158,10 @@ public class RobotContainer {
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
-        joystick.povLeft().toggleOnTrue(new IntakeCommand(intake));
-        // joystick.povRight().onTrue(new InstantCommand(() -> shooter.decrementHood(0.8), shooter));
+        joystick.povLeft().toggleOnTrue(new InstantCommand(() ->
+        shooter.incrementHood(1.5), shooter));
+        joystick.povRight().onTrue(new InstantCommand(() ->
+        shooter.decrementHood(1.5), shooter));
         joystick.povUp().onTrue(new InstantCommand(() -> intake.incrementPosition(5), intake));
         joystick.povDown().onTrue(new InstantCommand(() -> intake.decrementPosition(5), intake));
         // toggle logic
@@ -170,6 +178,7 @@ public class RobotContainer {
         // joystick.leftBumper().toggleOnTrue(new IntakeCommand(intake));
         joystick.rightBumper().toggleOnTrue(new ShooterCommand(shooter));
         joystick.y().toggleOnTrue(new FeederCommand(indexer, 6000, 4200));
+        joystick.x().toggleOnTrue(new IntakeCommand(intake));
 
         // ── Motor 1 (MotionMagic Position) ────────────────────────────────────
 

@@ -34,7 +34,7 @@
   "eventMarkers": [
     {
       "name": "IntakeOn",
-      "waypointRelativePos": 0.28309352517985314,
+      "waypointRelativePos": 0.12194244604316512,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -57,7 +57,7 @@
     "rotation": -135.0
   },
   "reversed": false,
-  "folder": null,
+  "folder": "intake test",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0

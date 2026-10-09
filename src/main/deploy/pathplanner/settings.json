@@ -3,8 +3,10 @@
   "robotLength": 0.762,
   "holonomicMode": true,
   "pathFolders": [
-    "square 2",
-    "square"
+    "rotation target test",
+    "intake test",
+    "square",
+    "square2"
   ],
   "autoFolders": [],
   "defaultMaxVel": 1.0,

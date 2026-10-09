@@ -38,6 +38,7 @@ public class Intake extends SubsystemBase {
     private final VelocityVoltage m_velocityVoltageRequest =
             new VelocityVoltage(0).withSlot(0).withEnableFOC(true);
 
+    // private final Motion
     public double IntakeGearRatio = 208.28;//162
     private boolean calibratingMin = false;
     private boolean calibratingMax = false;
@@ -58,7 +59,7 @@ public class Intake extends SubsystemBase {
         cfg.MotorOutput.PeakForwardDutyCycle =  0.8;
         cfg.MotorOutput.PeakReverseDutyCycle = -0.8;
 
-        cfg.Slot0.kP = 0.5;
+        cfg.Slot0.kP = 0.2;
         cfg.Slot0.kI = 0.0;
         cfg.Slot0.kD = 0.0;
         cfg.Slot0.kV = 0.0;
@@ -86,16 +87,16 @@ public class Intake extends SubsystemBase {
         cfg.MotorOutput.PeakForwardDutyCycle =  1;
         cfg.MotorOutput.PeakReverseDutyCycle = -1;
 
-        cfg.Slot0.kP = 1.0;
+        cfg.Slot0.kP = 0.1;
         cfg.Slot0.kI = 0.0;
         cfg.Slot0.kD = 0.0;
         cfg.Slot0.kV = 0.0;
         cfg.Slot0.kS = 0.0;
         cfg.Slot0.kG = 0.0;
 
-        cfg.MotionMagic.withMotionMagicAcceleration(100)
-                       .withMotionMagicCruiseVelocity(100)
-                       .withMotionMagicJerk(3000);
+        cfg.MotionMagic.withMotionMagicAcceleration(200)
+                       .withMotionMagicCruiseVelocity(200)
+                       .withMotionMagicJerk(500);
 
         cfg.SoftwareLimitSwitch.ForwardSoftLimitEnable    = false;
         cfg.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 50.0;

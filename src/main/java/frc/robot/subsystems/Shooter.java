@@ -27,12 +27,12 @@ public class Shooter extends SubsystemBase {
     private double leftTargetRPM = 0.0;
     private double rightTargetRPM = 0.0;
 
-    public double shooterRPM = 500;
-    public double testHoodPos = 15;
+    public double shooterRPM = 1000;
+    public double testHoodPos = 25;
 
     private double HoodGearRatio = 60.8417;
     public boolean HoodReset = false;
-    private static final double HOOD_MIN_DEG = 5.0;
+    private static final double HOOD_MIN_DEG = 2.5;
     private static final double HOOD_MAX_DEG = 38.0;
 
 
@@ -75,7 +75,6 @@ public class Shooter extends SubsystemBase {
         
         enableFollowers();
 
-
     }
 
     private void configureHood(){
@@ -86,7 +85,7 @@ public class Shooter extends SubsystemBase {
         cfg.MotorOutput.PeakForwardDutyCycle =  1;
         cfg.MotorOutput.PeakReverseDutyCycle = -1;
 
-        cfg.Slot0.kP = 0.3;
+        cfg.Slot0.kP = 0.8;
         cfg.Slot0.kI = 0.0;
         cfg.Slot0.kD = 0.0;
         cfg.Slot0.kV = 0.0;
@@ -95,7 +94,7 @@ public class Shooter extends SubsystemBase {
 
         cfg.MotionMagic.withMotionMagicAcceleration(300)
                        .withMotionMagicCruiseVelocity(100)
-                       .withMotionMagicJerk(0);
+                       .withMotionMagicJerk(100);
 
         double minRot = (HOOD_MIN_DEG * HoodGearRatio) / 360.0;
         double maxRot = (HOOD_MAX_DEG * HoodGearRatio) / 360.0;

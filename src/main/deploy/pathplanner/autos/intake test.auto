@@ -23,13 +23,13 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 2.0
+                  "waitTime": 3.0
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "IntakeOn"
+                  "name": "IntakeTransfer"
                 }
               },
               {
@@ -48,9 +48,28 @@
           }
         },
         {
-          "type": "path",
+          "type": "deadline",
           "data": {
-            "pathName": "path 3 "
+            "commands": [
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.1
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake Off"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "FeederOff"
+                }
+              }
+            ]
           }
         }
       ]

@@ -45,14 +45,19 @@
               "data": {
                 "name": "IntakeOn"
               }
-            },
-            {
-              "type": "named",
-              "data": {
-                "name": "FeederOn"
-              }
             }
           ]
+        }
+      }
+    },
+    {
+      "name": "Shooter Command",
+      "waypointRelativePos": 0.7838129496402799,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Shooter Command"
         }
       }
     }
@@ -70,7 +75,7 @@
     "rotation": 0.0
   },
   "reversed": false,
-  "folder": null,
+  "folder": "intake test",
   "idealStartingState": {
     "velocity": 0,
     "rotation": -135.0
