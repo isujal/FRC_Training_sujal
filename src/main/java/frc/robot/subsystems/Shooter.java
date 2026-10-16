@@ -203,8 +203,8 @@ private void publishTelemetry() {
     SmartDashboard.putNumber("Shooter/LShooterDown RPM", rpmOf(LShooterDown));
 
     // ---- Temperatures (a hot motor means too much current) ----
-    SmartDashboard.putNumber("Shooter/RShooterUp Temp", RShooterUp.getDeviceTemp().getValueAsDouble());
-    SmartDashboard.putNumber("Shooter/LShooterUp Temp", LShooterUp.getDeviceTemp().getValueAsDouble());
+    // SmartDashboard.putNumber("Shooter/RShooterUp Temp", RShooterUp.getDeviceTemp().getValueAsDouble());
+    // SmartDashboard.putNumber("Shooter/LShooterUp Temp", LShooterUp.getDeviceTemp().getValueAsDouble());
 
     // ---- Hood ----
     SmartDashboard.putNumber("Hood/AngleDeg", getHoodAngleDeg());

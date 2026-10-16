@@ -29,9 +29,19 @@ public final class Constants {
         private FieldConstants() {}
 
         // TODO: verify both numbers against the game manual / PathPlanner field.
-        // Copied from the Paraducks code, which used two slightly different lengths
-        // (16.54 and 16.54175). Keep exactly one value here and use it everywhere.
-        public static final double kFieldLength = 16.54;
+        // Copied from the Paraducks code, which used two slightly different lengths 
+        // (16.54 and 16.54175). Keep exactly one value here and use it everywhere.  
+        public static final double kFieldLength = 16.54;    // the team should 
+        public static final double kFieldWidth = 8.07; // verify
         public static final Pose2d kBlueGoal = new Pose2d(4.6, 4.02, new Rotation2d());
     }
+
+
+    public static final class VisionConstants {
+    public static final String kCameraName = "limelight-centre";
+    public static final double kMaxTagDistM = 4.0;     // ignore far tags
+    public static final double kMaxOmegaRadPerSec = Math.PI * 4; // ignore fast spins (blur)
+}
+// also add inside FieldConstants:
+// 
 }

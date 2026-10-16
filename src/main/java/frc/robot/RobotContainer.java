@@ -13,6 +13,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
@@ -26,6 +27,7 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Vision;
 
 import com.pathplanner.lib.util.PathPlannerLogging;
 
@@ -70,6 +72,7 @@ public class RobotContainer {
     private final CommandXboxController joystick = new CommandXboxController(0);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+    private final Vision vision = new Vision(drivetrain);
     private final SendableChooser<Command> autoChooser;
     private final Field2d field = new Field2d();
 
@@ -96,6 +99,8 @@ public class RobotContainer {
                 .alongWith(new InstantCommand(() -> indexer.stopIndexer()))));
 
         NamedCommands.registerCommand("Shooter Command", traced("Shooter Command", new ShooterCommand(shooter)));
+
+
 
     }
 
