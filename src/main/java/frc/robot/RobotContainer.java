@@ -63,6 +63,9 @@ public class RobotContainer {
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
+    private final SwerveRequest.FieldCentricFacingAngle facing =
+    new SwerveRequest.FieldCentricFacingAngle().withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+
     private final SlewRateLimiter xLimiter = new SlewRateLimiter(DriveConstants.kTranslationSlewRate);
     private final SlewRateLimiter yLimiter = new SlewRateLimiter(DriveConstants.kTranslationSlewRate);
     private boolean slowMode = false;
@@ -77,6 +80,8 @@ public class RobotContainer {
     private final Field2d field = new Field2d();
 
     public RobotContainer() {
+        facing.HeadingController.setPID(8.0, 0.0, 0.2);          // start here, tune
+        facing.HeadingController.enableContinuousInput(-Math.PI, Math.PI);
         registerNamedCommands(); // 1) register names first
         autoChooser = AutoBuilder.buildAutoChooser(); // testing only: this auto is the default
         SmartDashboard.putData("Auto Chooser", autoChooser);
@@ -128,9 +133,9 @@ public class RobotContainer {
                     Translation2d v = driverVelocity();
                     double scale = slowMode ? DriveConstants.kSlowModeScale : 1.0;
                     return drive
-                            .withVelocityX(xLimiter.calculate(v.getX()))
-                            .withVelocityY(yLimiter.calculate(v.getY()))
-                            .withRotationalRate(shapeAxis(-joystick.getRightX()) * MaxAngularRate * scale);
+                            .withVelocityX(xLimiter.calculate(v.getX()))    //  
+                            .withVelocityY(yLimiter.calculate(v.getY()))    //  
+                            .withRotationalRate(shapeAxis(-joystick.getRightX()) * MaxAngularRate * scale);  //  
                 }).beforeStarting(() -> {
                     // Start the limiters at the current stick value so the robot doesn't
                     // lurch when this command resumes after brake, heading lock, etc.
@@ -155,6 +160,12 @@ public class RobotContainer {
         // joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
         // joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
         // joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        joystick.rightTrigger().whileTrue(drivetrain.applyRequest(() -> {
+            Translation2d v = driverVelocity(); // driver keeps translation control
+            return facing.withVelocityX(v.getX()).withVelocityY(v.getY())
+                    .withTargetDirection(vision.getAngleToGoal().plus(Rotation2d.kZero)); // see note
+        }));
+        
         joystick.leftTrigger().whileTrue(
                 Commands.startEnd(() -> slowMode = true, () -> slowMode = false));
         // Reset the field-centric heading on left bumper press.

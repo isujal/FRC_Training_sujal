@@ -56,8 +56,8 @@ public class Intake extends SubsystemBase {
 
         cfg.MotorOutput.NeutralMode          = NeutralModeValue.Coast;
         cfg.MotorOutput.Inverted             = InvertedValue.CounterClockwise_Positive;
-        cfg.MotorOutput.PeakForwardDutyCycle =  0.8;
-        cfg.MotorOutput.PeakReverseDutyCycle = -0.8;
+        cfg.MotorOutput.PeakForwardDutyCycle =  0.5;
+        cfg.MotorOutput.PeakReverseDutyCycle = -0.5;
 
         cfg.Slot0.kP = 0.2;
         cfg.Slot0.kI = 0.0;

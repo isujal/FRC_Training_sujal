@@ -33,6 +33,7 @@ public class Vision extends SubsystemBase {
         var est = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(cam);
         lastEstimate = null;
 
+
         if (est != null && est.tagCount > 0
                 && est.avgTagDist < VisionConstants.kMaxTagDistM
                 && Math.abs(state.Speeds.omegaRadiansPerSecond) < VisionConstants.kMaxOmegaRadPerSec

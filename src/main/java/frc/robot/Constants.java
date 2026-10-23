@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import frc.robot.generated.TunerConstants;
 
 public final class Constants {
@@ -41,6 +42,17 @@ public final class Constants {
     public static final String kCameraName = "limelight-centre";
     public static final double kMaxTagDistM = 4.0;     // ignore far tags
     public static final double kMaxOmegaRadPerSec = Math.PI * 4; // ignore fast spins (blur)
+}
+// Constants.java
+public static final class ShotTable {
+    public static final InterpolatingDoubleTreeMap hoodDeg = new InterpolatingDoubleTreeMap();
+    public static final InterpolatingDoubleTreeMap rpm = new InterpolatingDoubleTreeMap();
+    static {                      // PLACEHOLDERS: replace with your measured values
+        hoodDeg.put(1.5, 8.0);  rpm.put(1.5, 2500.0);
+        hoodDeg.put(2.5, 15.0); rpm.put(2.5, 3000.0);
+        hoodDeg.put(3.5, 22.0); rpm.put(3.5, 3500.0);
+        hoodDeg.put(4.5, 28.0); rpm.put(4.5, 4000.0);
+    }
 }
 // also add inside FieldConstants:
 // 
