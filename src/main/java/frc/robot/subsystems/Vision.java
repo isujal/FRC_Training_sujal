@@ -85,6 +85,9 @@ public class Vision extends SubsystemBase {
         return getGoal().minus(drivetrain.getState().Pose.getTranslation()).getAngle();
     }
 
+    /** Horizontal offset to the tag in degrees. Positive = tag is to the RIGHT. */
+    public double getTxDeg() { return LimelightHelpers.getTX(cam); }
+
     // ----- Goal 4 helpers -----
     public void setPathTarget(Pose2d p) { pathTarget = p; }
     public Pose2d getVisionPose() { return lastEstimate == null ? null : lastEstimate.pose; }
