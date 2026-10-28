@@ -47,12 +47,12 @@ import frc.robot.Constants.DriveConstants;
 public class RobotContainer {
     // private final Basic_Subsystem m_subsystem = new Basic_Subsystem();
     public boolean motor2Running = false;
-    private double speed = 0.2;
+    private double speed = 0.25;
     private final Intake intake = new Intake();
-    private final Indexer indexer = new Indexer();
-    private final Shooter shooter = new Shooter();
+    private final Indexer indexer = new Indexer(); 
+    private final Shooter shooter = new Shooter();     
 
-    private double MaxSpeed = 0.1 * 1 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired
+    private double MaxSpeed = 0.2 * 1 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired
                                                                                             // top speed1
     private double MaxAngularRate = speed * RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per
                                                                                               // second max angular
