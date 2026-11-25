@@ -16,8 +16,8 @@ public class IntakeCommand extends Command {
     @Override
     public void initialize() {
 
-        intake.setIntakePosition(Intake.testAngle);
-        intake.setIntakeRollerRPM(120);
+        // intake.setIntakePosition(Intake.testAngle);
+        intake.setIntakeRollerRPM(30);
     }
 
     @Override
@@ -28,7 +28,7 @@ public class IntakeCommand extends Command {
     @Override
     public void end(boolean interrupted) {
         intake.stopMotor();
-        intake.setIntakePosition(Intake.kStowAngleDeg);
+        // intake.setIntakePosition(Intake.kStowAngleDeg);
     }
 
     @Override

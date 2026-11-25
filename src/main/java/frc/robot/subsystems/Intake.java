@@ -27,8 +27,8 @@ public class Intake extends SubsystemBase {
     public static final double kRollerVolts    = 9.0;     // peak duty 0.8 caps output at 9.6 V
 
     // ─── Hardware ─────────────────────────────────────────────────────────────
-    private final TalonFX leftRoller = new TalonFX(12, "rio");   // MotionMagic position
-    private final TalonFX rightRoller = new TalonFX(11, "rio");   // VelocityVoltage
+    private final TalonFX leftRoller = new TalonFX(17, "rio");   // MotionMagic position
+    private final TalonFX rightRoller = new TalonFX(61, "rio");   // VelocityVoltage
     private final TalonFX intakeMotor = new TalonFX(59, "rio");   // VelocityVoltage
     
     // ─── Control Requests ─────────────────────────────────────────────────────

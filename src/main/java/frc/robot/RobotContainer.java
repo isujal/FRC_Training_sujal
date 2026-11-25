@@ -52,7 +52,8 @@ public class RobotContainer {
     private final Indexer indexer = new Indexer(); 
     private final Shooter shooter = new Shooter();     
 
-    private double MaxSpeed = 0.2 * 1 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired
+    private double MaxSpeed = 0.5
+     * 1 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired
                                                                                             // top speed1
     private double MaxAngularRate = speed * RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per
                                                                                               // second max angular
@@ -176,10 +177,14 @@ public class RobotContainer {
 
         joystick.povLeft().toggleOnTrue(new InstantCommand(() ->
         shooter.incrementHood(1.5), shooter));
+
         joystick.povRight().onTrue(new InstantCommand(() ->
         shooter.decrementHood(1.5), shooter));
+
         joystick.povUp().onTrue(new InstantCommand(() -> intake.incrementPosition(5), intake));
+
         joystick.povDown().onTrue(new InstantCommand(() -> intake.decrementPosition(5), intake));
+        
         // toggle logic
         // joystick.rightBumper().onTrue(new InstantCommand(() -> {
         // motor2Running = !motor2Running;
@@ -193,7 +198,6 @@ public class RobotContainer {
 
         // joystick.leftBumper().toggleOnTrue(new IntakeCommand(intake));
         joystick.rightBumper().toggleOnTrue(new ShooterCommand(shooter));
-        joystick.y().toggleOnTrue(new FeederCommand(indexer, 6000, 4200));
         joystick.x().toggleOnTrue(new IntakeCommand(intake));
 
         // ── Motor 1 (MotionMagic Position) ────────────────────────────────────

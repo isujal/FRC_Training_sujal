@@ -3,8 +3,9 @@
   "robotLength": 0.762,
   "holonomicMode": true,
   "pathFolders": [
-    "rotation target test",
+    "square_dias",
     "intake test",
+    "rotation target test",
     "square",
     "square2"
   ],
