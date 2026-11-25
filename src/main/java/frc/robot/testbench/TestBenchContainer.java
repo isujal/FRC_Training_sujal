@@ -34,7 +34,7 @@ import java.util.function.Function;
  * (so the two never fight over the same CAN IDs).
  *
  * <pre>
- *  TESTER controller = port 1. It controls ONE mechanism at a time, shown in Elastic as
+ *  TESTER controller = port 0. It controls ONE mechanism at a time, shown in Elastic as
  *  "TestBench/Controlling". Change it with the "TestBench/Mechanism" dropdown OR the bumpers.
  *
  *  RB / LB ...... next / previous mechanism (also moves the Elastic dropdown)
@@ -48,7 +48,7 @@ import java.util.function.Function;
  *  Start (hold 1 s) ... position: re-zero encoder at start position
  *  Back ......... E-STOP: every mechanism stops and latches a fault
  *
- *  DRIVER controller = port 0 (only if kIncludeDrive): slow field-centric drive, LB = reset heading.
+ *  DRIVER controller = port 1 (only if kIncludeDrive): slow field-centric drive, LB = reset heading.
  * </pre>
  */
 public class TestBenchContainer {
@@ -59,8 +59,12 @@ public class TestBenchContainer {
 
     private final List<TestMechanism> mechanisms = MechanismPresets.create();
     private final SendableChooser<TestMechanism> chooser = new SendableChooser<>();
-    private final CommandXboxController tester = new CommandXboxController(1);
-    private final CommandXboxController driver = new CommandXboxController(0);
+    /** Driver Station USB ports (the order in the DS "USB Devices" tab). */
+    private static final int kTesterPort = 0;
+    private static final int kDriverPort = 1;
+
+    private final CommandXboxController tester = new CommandXboxController(kTesterPort);
+    private final CommandXboxController driver = new CommandXboxController(kDriverPort);
 
     public TestBenchContainer() {
         // Record everything (all dashboard values + DS/joystick data) to a .wpilog for AdvantageScope.

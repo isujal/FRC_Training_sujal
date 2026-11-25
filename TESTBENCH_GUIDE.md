@@ -105,7 +105,7 @@ there before power-on, or run **Home To Hard Stop**.
 
 ## 6. Controllers
 
-**Tester controller – USB port 1** drives ONE mechanism at a time, shown in `TestBench/Controlling`.
+**Tester controller – USB port 0** drives ONE mechanism at a time, shown in `TestBench/Controlling`.
 
 **Switching mechanism:** press **RB** (next) / **LB** (previous), or pick it in the `TestBench/Mechanism`
 dropdown. Both do the same thing and the dropdown follows the bumpers. No redeploy needed. The controller
@@ -128,7 +128,7 @@ are controlling, and **Back** stops everything. This also lets you run two mecha
 | **Start (hold 1 s)** | – | re-zero: "it is at startPosition now" |
 | **Back** | **E-STOP every mechanism** | same |
 
-**Driver controller – port 0** (only if `kIncludeDrive = true` in `TestBenchContainer`):
+**Driver controller – USB port 1** (only if `kIncludeDrive = true` in `TestBenchContainer`):
 30% speed field-centric drive, LB = reset heading.
 
 ---

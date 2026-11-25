@@ -13,7 +13,7 @@ import java.util.function.DoubleSupplier;
  * Preset for anything that SPINS: intake rollers, feeder, indexer, conveyor, gripper wheels, shooter.
  *
  * <pre>
- *  Controller (port 1)          What it does
+ *  Tester controller (port 0)   What it does
  *  A                            run forward at TargetRPM (closed loop) until B
  *  Y                            run reverse at TargetRPM until B
  *  POV up / down                TargetRPM +/- RPMStep  (live, even while running)

@@ -16,7 +16,7 @@ import java.util.function.DoubleSupplier;
  * gripper pivot, elevator / telescope (use {@link MechanismConfig#units} for inches or meters).
  *
  * <pre>
- *  Controller (port 1)          What it does
+ *  Tester controller (port 0)   What it does
  *  A / Y                        go to Preset A / Preset B (follows the preset live while held active)
  *  POV up / down                jog the target by +/- JogStep
  *  Right / left trigger         open-loop volts (trigger x ManualVolts). Release = hold where it is
