@@ -109,7 +109,7 @@ there before power-on, or run **Home To Hard Stop**.
 
 **Switching mechanism:** press **RB** (next) / **LB** (previous), or pick it in the `TestBench/Mechanism`
 dropdown. Both do the same thing and the dropdown follows the bumpers. No redeploy needed. The controller
-**rumbles** on every switch: a short buzz = switched, a long buzz = you are back at mechanism #1.
+gives the **same short rumble** on every switch (LB or RB, any mechanism).
 
 Switching does **not** stop what was running: `TestBench/Running Now` shows everything that is still
 running (e.g. `Intake Rollers: Run Forward | Feeder: Endurance Soak`). B only stops the mechanism you

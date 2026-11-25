@@ -38,7 +38,7 @@ import java.util.function.Function;
  *  "TestBench/Controlling". Change it with the "TestBench/Mechanism" dropdown OR the bumpers.
  *
  *  RB / LB ...... next / previous mechanism (also moves the Elastic dropdown)
- *                 rumble: short buzz = switched, long buzz = back at mechanism #1
+ *                 the controller gives one short buzz on every switch
  *  A ............ roller: run forward at TargetRPM   | position: go to Preset A
  *  Y ............ roller: run reverse                | position: go to Preset B
  *  B ............ STOP this mechanism (position: hold here) + clear its fault
@@ -111,22 +111,21 @@ public class TestBenchContainer {
     private final StringPublisher dropdownSelection = NetworkTableInstance.getDefault()
             .getStringTopic("/SmartDashboard/TestBench/Mechanism/selected").publish();
 
-    /** RB = +1 (next), LB = -1 (previous). Wraps around at the ends of the list. @return new index */
-    private int selectNext(int direction) {
+    /** RB = +1 (next), LB = -1 (previous). Wraps around at the ends of the list. */
+    private void selectNext(int direction) {
         int i = mechanisms.indexOf(selected());
         int nextIndex = Math.floorMod(i + direction, mechanisms.size());
         TestMechanism next = mechanisms.get(nextIndex);
         dropdownSelection.set(next.getName()); // the dropdown is the one source of truth
         System.out.println("[TestBench] Controller now controls: " + next.getName());
-        return nextIndex;
     }
 
-    /** Switch mechanism, then buzz the tester controller: short = switched, long = back at #1. */
+    /** Switch mechanism, then the same short buzz on the tester controller for every switch. */
     private Command switchMechanism(int direction) {
-        return Commands.defer(() -> {
-            boolean atFirst = selectNext(direction) == 0;
-            return rumble(atFirst ? 0.5 : 0.15);
-        }, java.util.Set.of()).ignoringDisable(true).withName("Switch Mechanism");
+        return Commands.runOnce(() -> selectNext(direction))
+                .andThen(rumble(0.15))
+                .ignoringDisable(true)
+                .withName("Switch Mechanism");
     }
 
     private Command rumble(double seconds) {
