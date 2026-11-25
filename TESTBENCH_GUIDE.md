@@ -87,7 +87,9 @@ there before power-on, or run **Home To Hard Stop**.
    - `SmartDashboard/TestBench/Mechanism` → **ComboBox Chooser** (picks what the controller drives)
    - `SmartDashboard/TestBench/E-STOP ALL`, `Clear All Faults`, `Print All Tunables`,
      `Reset Tunables To Code` → **Command** buttons
-   - `SmartDashboard/TestBench/Selected Last Result`, `Battery V`, `Tunables Changed From Code`
+   - `SmartDashboard/TestBench/Controlling` → **Text Display** (which mechanism the controller drives)
+   - `SmartDashboard/TestBench/Running Now` → **Text Display** (everything that is running / faulted)
+   - `SmartDashboard/TestBench/Controlling Last Result`, `Battery V`, `Tunables Changed From Code`
    - `SmartDashboard/TestBench/Tunables Report` → **Text Display** (make it tall: it is one line per
      changed value)
 3. For each mechanism, make a tab (e.g. "Intake Rollers"):
@@ -103,10 +105,19 @@ there before power-on, or run **Home To Hard Stop**.
 
 ## 6. Controllers
 
-**Tester controller – USB port 1** (drives whichever mechanism is selected in Elastic):
+**Tester controller – USB port 1** drives ONE mechanism at a time, shown in `TestBench/Controlling`.
+
+**Switching mechanism:** press **RB** (next) / **LB** (previous), or pick it in the `TestBench/Mechanism`
+dropdown. Both do the same thing and the dropdown follows the bumpers. No redeploy needed.
+
+Switching does **not** stop what was running: `TestBench/Running Now` shows everything that is still
+running (e.g. `Intake Rollers: Run Forward | Feeder: Endurance Soak`). B only stops the mechanism you
+are controlling, and **Back** stops everything. This also lets you run two mechanisms together
+(e.g. intake + feeder hand-off).
 
 | Button | Roller | Position mechanism |
 |---|---|---|
+| **RB / LB** | next / previous mechanism | same |
 | **A** | run forward at `TargetRPM` (until B) | go to `PresetA` |
 | **Y** | run reverse at `TargetRPM` | go to `PresetB` |
 | **B** | **stop** + clear fault | **hold where it is** + clear fault |

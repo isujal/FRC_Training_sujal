@@ -8,6 +8,8 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StringPublisher;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
@@ -31,8 +33,10 @@ import java.util.function.Function;
  * (so the two never fight over the same CAN IDs).
  *
  * <pre>
- *  TESTER controller = port 1. It controls the mechanism picked in Elastic ("TestBench/Mechanism").
+ *  TESTER controller = port 1. It controls ONE mechanism at a time, shown in Elastic as
+ *  "TestBench/Controlling". Change it with the "TestBench/Mechanism" dropdown OR the bumpers.
  *
+ *  RB / LB ...... next / previous mechanism (also moves the Elastic dropdown)
  *  A ............ roller: run forward at TargetRPM   | position: go to Preset A
  *  Y ............ roller: run reverse                | position: go to Preset B
  *  B ............ STOP this mechanism (position: hold here) + clear its fault
@@ -97,6 +101,18 @@ public class TestBenchContainer {
                 Commands.runOnce(TunableNumber::resetAllToCode).ignoringDisable(true).withName("Reset"));
     }
 
+    /** Writing here is exactly what Elastic does when you pick from the dropdown. */
+    private final StringPublisher dropdownSelection = NetworkTableInstance.getDefault()
+            .getStringTopic("/SmartDashboard/TestBench/Mechanism/selected").publish();
+
+    /** RB = +1 (next), LB = -1 (previous). Wraps around at the ends of the list. */
+    private void selectNext(int direction) {
+        int i = mechanisms.indexOf(selected());
+        TestMechanism next = mechanisms.get(Math.floorMod(i + direction, mechanisms.size()));
+        dropdownSelection.set(next.getName()); // the dropdown is the one source of truth
+        System.out.println("[TestBench] Controller now controls: " + next.getName());
+    }
+
     private TestMechanism selected() {
         TestMechanism m = chooser.getSelected();
         return m != null ? m : mechanisms.get(0);
@@ -126,6 +142,8 @@ public class TestBenchContainer {
         onPress(tester.povDown(), m -> m.nudgeCommand(-1));
         onPress(tester.start().debounce(1.0), m -> m.runOnce(m::zeroHere).withName("Zero Here"));
         tester.back().onTrue(eStopCommand());
+        tester.rightBumper().onTrue(Commands.runOnce(() -> selectNext(+1)).ignoringDisable(true));
+        tester.leftBumper().onTrue(Commands.runOnce(() -> selectNext(-1)).ignoringDisable(true));
 
         // Triggers: runs while either trigger is pressed, stops when both are released.
         Trigger anyTrigger = tester.rightTrigger(0.05).or(tester.leftTrigger(0.05));
@@ -168,8 +186,11 @@ public class TestBenchContainer {
 
     public void periodic() {
         TestMechanism m = selected();
-        SmartDashboard.putString("TestBench/Selected", m.getName());
-        SmartDashboard.putString("TestBench/Selected Last Result",
+        // The mechanism the tester controller drives right now, e.g. "Feeder (4/6)".
+        SmartDashboard.putString("TestBench/Controlling",
+                m.getName() + "  (" + (mechanisms.indexOf(m) + 1) + "/" + mechanisms.size() + ")");
+        SmartDashboard.putString("TestBench/Running Now", runningNow());
+        SmartDashboard.putString("TestBench/Controlling Last Result",
                 SmartDashboard.getString("TestBench/" + m.getName() + "/Last Result", "-"));
         SmartDashboard.putNumber("TestBench/Battery V", RobotController.getBatteryVoltage());
         SmartDashboard.putNumber("TestBench/Tunables Changed From Code", TunableNumber.countChangedFromCode());
@@ -179,6 +200,21 @@ public class TestBenchContainer {
             reportLoops = 0;
             SmartDashboard.putString("TestBench/Tunables Report", TunableNumber.changedReport());
         }
+    }
+
+    /** Every mechanism that is doing something (not idle), e.g. "Intake Rollers: Run Forward | Feeder: Endurance Soak". */
+    private String runningNow() {
+        StringBuilder sb = new StringBuilder();
+        for (TestMechanism m : mechanisms) {
+            Command c = m.getCurrentCommand();
+            String what = m.isFaulted() ? "FAULT - " + m.getFault()
+                    : (c == null || c.getName().equals("Idle")) ? null : c.getName();
+            if (what != null) {
+                if (sb.length() > 0) sb.append("  |  ");
+                sb.append(m.getName()).append(": ").append(what);
+            }
+        }
+        return sb.length() == 0 ? "nothing running" : sb.toString();
     }
 
     private int reportLoops = 25; // so the report is published on the very first loop
