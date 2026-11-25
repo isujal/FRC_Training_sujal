@@ -173,5 +173,13 @@ public class TestBenchContainer {
                 SmartDashboard.getString("TestBench/" + m.getName() + "/Last Result", "-"));
         SmartDashboard.putNumber("TestBench/Battery V", RobotController.getBatteryVoltage());
         SmartDashboard.putNumber("TestBench/Tunables Changed From Code", TunableNumber.countChangedFromCode());
+
+        // Every 0.5 s (no need every loop): the list of values that differ from code.
+        if (++reportLoops >= 25) {
+            reportLoops = 0;
+            SmartDashboard.putString("TestBench/Tunables Report", TunableNumber.changedReport());
+        }
     }
+
+    private int reportLoops = 25; // so the report is published on the very first loop
 }

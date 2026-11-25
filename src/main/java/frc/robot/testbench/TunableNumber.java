@@ -71,6 +71,26 @@ public class TunableNumber {
         System.out.println("=========== " + changed + " value(s) differ from code ===========");
     }
 
+    /**
+     * Only the values that differ from code, one per line, e.g.
+     * "Intake Rollers/TargetRPM = 2200 (code: 1800)". Shown in Elastic as TestBench/Tunables Report.
+     */
+    public static String changedReport() {
+        StringBuilder sb = new StringBuilder();
+        for (TunableNumber t : ALL) {
+            if (t.get() != t.codeDefault) {
+                sb.append(t.key).append(" = ").append(format(t.get()))
+                  .append("   (code: ").append(format(t.codeDefault)).append(")\n");
+            }
+        }
+        return sb.length() == 0 ? "All values match the code." : sb.toString().trim();
+    }
+
+    /** 2200.0 -> "2200", 0.12345 -> "0.1235". */
+    private static String format(double v) {
+        return v == Math.rint(v) ? String.valueOf((long) v) : String.format("%.4f", v);
+    }
+
     /** Throws away every saved value and goes back to the defaults written in code. */
     public static void resetAllToCode() {
         for (TunableNumber t : ALL) {

@@ -88,6 +88,8 @@ there before power-on, or run **Home To Hard Stop**.
    - `SmartDashboard/TestBench/E-STOP ALL`, `Clear All Faults`, `Print All Tunables`,
      `Reset Tunables To Code` → **Command** buttons
    - `SmartDashboard/TestBench/Selected Last Result`, `Battery V`, `Tunables Changed From Code`
+   - `SmartDashboard/TestBench/Tunables Report` → **Text Display** (make it tall: it is one line per
+     changed value)
 3. For each mechanism, make a tab (e.g. "Intake Rollers"):
    - Live values from `SmartDashboard/TestBench/Intake Rollers/…`: `Speed RPM`, `Target RPM (tunable)`,
      `Stator A`, `Max Temp C`, `Fault`, `OK (no fault)`, `Running`, `Last Result`.
@@ -128,9 +130,10 @@ there before power-on, or run **Home To Hard Stop**.
    them the same way. They are re-sent to the motor automatically (the console prints
    "new gains/limits sent to motors").
 4. Values are **saved on the roboRIO**, so they survive a reboot.
-5. When you are happy: press **Print All Tunables**, open the Driver Station console (or the RioLog in
-   VS Code), and copy the lines marked `<-- CHANGED` into the code (`MechanismPresets.java` or the
-   competition subsystem).
+5. When you are happy, read **`TestBench/Tunables Report`** in Elastic. It lists only the values you
+   changed, e.g. `Intake Rollers/TargetRPM = 2200   (code: 1800)`, and updates by itself. Copy those
+   into the code (`MechanismPresets.java` or the competition subsystem).
+   (**Print All Tunables** prints the full list, changed or not, to the Driver Station console / RioLog.)
 6. **Reset Tunables To Code** throws all saved values away. Do this after copying the values into the
    code. Otherwise the saved values keep overriding the code, and `Tunables Changed From Code` stays
    above 0 as a reminder.
