@@ -12,6 +12,12 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+/**
+ * Shooter flywheel (54 leader + 55, 56, 53 followers) and hood (52).
+ *
+ * UNITS: flywheel speed is RPM of the MOTOR shaft (divided by 60 -> rps for Phoenix).
+ * Hood position is DEGREES of the hood (converted with HoodGearRatio).
+ */
 public class Shooter extends SubsystemBase {
 
     public final TalonFX LShooterUp = new TalonFX(55, "rio");

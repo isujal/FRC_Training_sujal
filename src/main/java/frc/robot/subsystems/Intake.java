@@ -13,6 +13,14 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+/**
+ * Intake = two rollers (17 leader, 61 follower) + the elbow/pivot (59).
+ *
+ * UNITS (same rule everywhere in this repo):
+ *   - Roller speed is RPM of the roller MOTOR shaft (no gear ratio is set for the rollers).
+ *     Phoenix velocity is rotations per SECOND, so every RPM is divided by 60 before it is sent.
+ *   - Elbow position is DEGREES of the elbow (converted with kElbowGearRatio).
+ */
 public class Intake extends SubsystemBase {
 
     private double m_targetPos = 0.0;
@@ -26,10 +34,15 @@ public class Intake extends SubsystemBase {
     public static final double kStowAngleDeg   = 5.0;     // a few degrees off the hard stop
     public static final double kRollerVolts    = 9.0;     // peak duty 0.8 caps output at 9.6 V
 
+    /** Roller speed for teleop intaking (IntakeCommand), motor RPM. */
+    public static final double kRollerIntakeRPM = 1800.0;
+    /** Roller speed used by the auto named commands, motor RPM. ~3000 is the most the 0.5 peak duty allows. */
+    public static final double kRollerAutoRPM   = 3000.0;
+
     // ─── Hardware ─────────────────────────────────────────────────────────────
-    private final TalonFX leftRoller = new TalonFX(17, "rio");   // MotionMagic position
-    private final TalonFX rightRoller = new TalonFX(61, "rio");   // VelocityVoltage
-    private final TalonFX intakeMotor = new TalonFX(59, "rio");   // VelocityVoltage
+    private final TalonFX leftRoller = new TalonFX(17, "rio");   // roller leader, VelocityVoltage
+    private final TalonFX rightRoller = new TalonFX(61, "rio");   // roller follower (opposed)
+    private final TalonFX intakeMotor = new TalonFX(59, "rio");   // elbow/pivot, MotionMagic position
     
     // ─── Control Requests ─────────────────────────────────────────────────────
     private final MotionMagicDutyCycle m_motionMagicRequest =
@@ -38,10 +51,6 @@ public class Intake extends SubsystemBase {
     private final VelocityVoltage m_velocityVoltageRequest =
             new VelocityVoltage(0).withSlot(0).withEnableFOC(true);
 
-    // private final Motion
-    public double IntakeGearRatio = 208.28;//162
-    private boolean calibratingMin = false;
-    private boolean calibratingMax = false;
 
     // ─── Constructor ──────────────────────────────────────────────────────────
     public Intake() {
@@ -59,10 +68,11 @@ public class Intake extends SubsystemBase {
         cfg.MotorOutput.PeakForwardDutyCycle =  0.5;
         cfg.MotorOutput.PeakReverseDutyCycle = -0.5;
 
+        // Velocity gains are in volts per (motor rotation per second).
         cfg.Slot0.kP = 0.2;
         cfg.Slot0.kI = 0.0;
         cfg.Slot0.kD = 0.0;
-        cfg.Slot0.kV = 0.0;
+        cfg.Slot0.kV = 0.12;  // 12 V / 100 rps (Kraken free speed). Without kV it never reaches the target RPM.
         cfg.Slot0.kS = 0.0;
 
         cfg.CurrentLimits.StatorCurrentLimit = 80;
@@ -142,7 +152,7 @@ public class Intake extends SubsystemBase {
 
         SmartDashboard.putNumber("Intake/ElbowAngle (deg)",  getIntakeAngleDeg());
         SmartDashboard.putNumber("Intake/ElbowTarget (deg)", m_targetPos * 360.0 / kElbowGearRatio);
-        SmartDashboard.putNumber("Intake/RollerRPM",         leftRoller.getVelocity().getValueAsDouble() * 60.0);
+        SmartDashboard.putNumber("Intake/RollerRPM",         getIntakeRollerRPM());
 
     }
 
@@ -178,16 +188,22 @@ public class Intake extends SubsystemBase {
         return intakeMotor.getPosition().getValueAsDouble();
     }
 
-      public double getIntakeAngleDeg() {
-    return getintakePosition() * 360 / IntakeGearRatio;
+    public double getIntakeAngleDeg() {
+        return getintakePosition() * 360.0 / kElbowGearRatio;
     }
 
     private static double degToRot(double deg) { return deg * kElbowGearRatio / 360.0; }
 
-    // ─── Motor 2 Actions (VelocityVoltage) ────────────────────────────────────
+    // ─── Roller Actions (VelocityVoltage) ─────────────────────────────────────
 
-    public void setIntakeRollerRPM(double RPM) {
-        leftRoller.setControl(m_velocityVoltageRequest.withVelocity(RPM).withSlot(0));
+    /** @param rpm roller motor RPM (e.g. {@link #kRollerIntakeRPM}). */
+    public void setIntakeRollerRPM(double rpm) {
+        leftRoller.setControl(m_velocityVoltageRequest.withVelocity(rpm / 60.0).withSlot(0)); // RPM -> rps
+    }
+
+    /** Roller motor RPM. */
+    public double getIntakeRollerRPM() {
+        return leftRoller.getVelocity().getValueAsDouble() * 60.0; // rps -> RPM
     }
 
     public void stopMotor() {

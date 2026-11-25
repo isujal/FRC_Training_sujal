@@ -12,6 +12,12 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+/**
+ * Indexer (10) + feeder (57 leader, 51 follower).
+ *
+ * UNITS: all speeds are RPM of the MOTOR shaft. Phoenix velocity is rotations per SECOND,
+ * so every RPM is divided by 60 before it is sent (see setFeederRPM / setIndexerRPM).
+ */
 public class Indexer extends SubsystemBase {
 
 
@@ -43,7 +49,7 @@ private double feederTargetRPM = 0.0;
         cfg.Slot0.kP = 0.1;
         cfg.Slot0.kI = 0.0;
         cfg.Slot0.kD = 0.0;
-        cfg.Slot0.kV = 0.0;
+        cfg.Slot0.kV = 0.12;  // 12 V / 100 rps (Kraken free speed). Without kV it never reaches the target RPM.
         cfg.Slot0.kS = 0.0;
         cfg.Slot0.kA = 0.0;
 
@@ -73,7 +79,7 @@ private double feederTargetRPM = 0.0;
         cfg.Slot0.kP = 0.1;
         cfg.Slot0.kI = 0.0;
         cfg.Slot0.kD = 0.0;
-        cfg.Slot0.kV = 0.0;
+        cfg.Slot0.kV = 0.12;  // 12 V / 100 rps (Kraken free speed). Without kV it never reaches the target RPM.
         cfg.Slot0.kS = 0.0;
         cfg.Slot0.kA = 0.0;
 

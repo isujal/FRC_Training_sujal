@@ -92,10 +92,10 @@ public class RobotContainer {
     private void registerNamedCommands() {
 
         NamedCommands.registerCommand("IntakeOn",
-                traced("IntakeOn", new InstantCommand(() -> intake.setIntakeRollerRPM(300))
+                traced("IntakeOn", new InstantCommand(() -> intake.setIntakeRollerRPM(Intake.kRollerAutoRPM))
                         .alongWith(new InstantCommand(() -> intake.setIntakePosition(135)))));
         NamedCommands.registerCommand("IntakeTransfer",
-                traced("IntakeTransfer", new InstantCommand(() -> intake.setIntakeRollerRPM(300))
+                traced("IntakeTransfer", new InstantCommand(() -> intake.setIntakeRollerRPM(Intake.kRollerAutoRPM))
                         .alongWith(new InstantCommand(() -> intake.setIntakePosition(45)))));
         NamedCommands.registerCommand("Intake Off", traced("Intake Off", new InstantCommand(() -> intake.stopMotor())));
         NamedCommands.registerCommand("FeederOn",

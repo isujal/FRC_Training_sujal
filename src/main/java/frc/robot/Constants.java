@@ -10,6 +10,12 @@ import frc.robot.generated.TunerConstants;
 public final class Constants {
     private Constants() {}
 
+    /**
+     * true  = TEST BENCH robot (frc.robot.testbench): generic mechanism testing + live tuning.
+     * false = COMPETITION robot (RobotContainer). Set this to false before any match!
+     */
+    public static final boolean kTestBenchMode = true;
+
     public static final class DriveConstants {
         private DriveConstants() {}
 
