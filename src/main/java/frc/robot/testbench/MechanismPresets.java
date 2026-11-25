@@ -27,11 +27,12 @@ public final class MechanismPresets {
                 .inverted(false).brake(false)
                 .maxVolts(6.0)                          // = the old 0.5 peak duty cycle
                 .currentLimits(80, 40)
+                .motorFreeSpeedRPM(6380)                 // for x60 = 6000, for x44 = 7530, for falcon = 6380
                 .pid(0.2, 0, 0)                         // kV is estimated from free speed
                 .targetRPM(1800)),
 
             new PositionMechanism(MechanismConfig.named("Intake Pivot")
-                .leader(59)
+                .leader(1)
                 .inverted(true).brake(true)
                 .gearRatio(208.28)                      // motor rotations per pivot rotation
                 .currentLimits(40, 40)
@@ -66,6 +67,18 @@ public final class MechanismPresets {
                 .currentLimits(80, 40)
                 .pid(0.4, 0, 0).feedforward(0.25, 0.15, 0.09)
                 .targetRPM(2000)),
+
+                new PositionMechanism(MechanismConfig.named("New Arm")
+                .leader(2)
+                .brake(true)
+                .gearRatio(100.0)
+                .maxVolts(6.0)
+                .currentLimits(40, 40)
+                .range(-30, 110).startPosition(-30) // ARM gravity: 0 deg MUST be horizontal
+                .presets(0, 90)
+                .gravity(MechanismConfig.Gravity.ARM, 0.0)          // run "Find kS + kG" to get kG
+                .pid(30, 0, 0)
+                .motionMagic(90, 180, 0)),
 
             new PositionMechanism(MechanismConfig.named("Hood")
                 .leader(52)
