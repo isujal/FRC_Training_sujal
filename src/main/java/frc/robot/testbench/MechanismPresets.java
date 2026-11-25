@@ -28,7 +28,8 @@ public final class MechanismPresets {
                 .maxVolts(6.0)                          // = the old 0.5 peak duty cycle
                 .currentLimits(80, 40)
                 .motorFreeSpeedRPM(6380)                 // for x60 = 6000, for x44 = 7530, for falcon = 6380
-                .pid(0.2, 0, 0)                         // kV is estimated from free speed
+                .pid(0.2, 0, 0)
+                .feedforward(0.0, 0.113, 0.0)           // kS, kV, kA. kV = 12 V / (6380/60 rps). Run Speed Ramp to measure
                 .targetRPM(1800)),
 
             new PositionMechanism(MechanismConfig.named("Intake Pivot")
@@ -39,6 +40,7 @@ public final class MechanismPresets {
                 .range(0, 140).startPosition(0)         // sits at 0 deg (stowed) at power-on
                 .presets(5, 120)                        // A = stow, Y = deploy
                 .pid(250, 0, 0)                         // old 0.1 duty/motor-rot converted to volts/pivot-rot
+                .feedforward(0.0, 25.0, 0.0)            // kS, kV, kA. kV = 12 V / (6000/60/208.28 rps). Run "Find kS + kG"
                 .motionMagic(345, 345, 864)),           // old Motion Magic values converted to deg/s
 
             new RollerMechanism(MechanismConfig.named("Indexer")
@@ -47,6 +49,7 @@ public final class MechanismPresets {
                 .maxVolts(9.6)                          // = the old 0.8 peak duty cycle
                 .currentLimits(80, 40)
                 .pid(0.1, 0, 0)
+                .feedforward(0.0, 0.12, 0.0)            // kS, kV, kA. kV = 12 V / (6000/60 rps)
                 .targetRPM(4000)),
 
             new RollerMechanism(MechanismConfig.named("Feeder")
@@ -55,6 +58,7 @@ public final class MechanismPresets {
                 .maxVolts(9.6)
                 .currentLimits(80, 40)
                 .pid(0.1, 0, 0)
+                .feedforward(0.0, 0.12, 0.0)            // kS, kV, kA. kV = 12 V / (6000/60 rps)
                 .targetRPM(4200)),
 
             new RollerMechanism(MechanismConfig.named("Shooter")
@@ -65,10 +69,11 @@ public final class MechanismPresets {
                 .inverted(true)
                 .maxVolts(9.6)
                 .currentLimits(80, 40)
-                .pid(0.4, 0, 0).feedforward(0.25, 0.15, 0.09)
+                .pid(0.4, 0, 0)
+                .feedforward(0.25, 0.15, 0.09)          // kS, kV, kA (from the old shooter code)
                 .targetRPM(2000)),
 
-                new PositionMechanism(MechanismConfig.named("New Arm")
+            new PositionMechanism(MechanismConfig.named("New Arm")
                 .leader(2)
                 .brake(true)
                 .gearRatio(100.0)
@@ -78,6 +83,7 @@ public final class MechanismPresets {
                 .presets(0, 90)
                 .gravity(MechanismConfig.Gravity.ARM, 0.0)          // run "Find kS + kG" to get kG
                 .pid(30, 0, 0)
+                .feedforward(0.0, 12.0, 0.0)            // kS, kV, kA. kV = 12 V / (6000/60/100 rps). Run "Find kS + kG"
                 .motionMagic(90, 180, 0)),
 
             new PositionMechanism(MechanismConfig.named("Hood")
@@ -88,6 +94,7 @@ public final class MechanismPresets {
                 .range(0, 38).startPosition(0)
                 .presets(5, 25)
                 .pid(584, 0, 0)                         // old 0.8 duty/motor-rot converted
+                .feedforward(0.0, 7.30, 0.0)            // kS, kV, kA. kV = 12 V / (6000/60/60.8417 rps)
                 .motionMagic(1183, 1775, 1775))
 
             // ── TEMPLATES: copy, fill in, add above ──────────────────────────────────────────
@@ -100,6 +107,7 @@ public final class MechanismPresets {
             //     .maxVolts(6.0)                      // start gentle on a new mechanism
             //     .currentLimits(60, 40)
             //     .pid(0.1, 0, 0)
+            //     .feedforward(0.0, 0.36, 0.0)        // kS, kV, kA. kV = 12 V / (6000/60/3 rps) = 0.36
             //     .targetRPM(1000)),
             //
             // An arm / wrist / pivot (degrees):
@@ -114,6 +122,7 @@ public final class MechanismPresets {
             //     .presets(0, 90)
             //     .gravity(MechanismConfig.Gravity.ARM, 0.0)          // run "Find kS + kG" to get kG
             //     .pid(30, 0, 0)
+            //     .feedforward(0.0, 12.0, 0.0)        // kS, kV, kA. kV = 12 V / (6000/60/100 rps) = 12
             //     .motionMagic(90, 180, 0)),
             //
             // An elevator (inches):
@@ -127,6 +136,7 @@ public final class MechanismPresets {
             //     .presets(5, 40)
             //     .gravity(MechanismConfig.Gravity.ELEVATOR, 0.0)
             //     .pid(2, 0, 0)
+            //     .feedforward(0.0, 1.2, 0.0)         // kS, kV, kA. kV = 12 V / (6000/60/12 rps) = 1.2
             //     .motionMagic(20, 40, 0)),
         );
     }

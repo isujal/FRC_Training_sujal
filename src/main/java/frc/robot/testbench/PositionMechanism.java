@@ -30,7 +30,7 @@ import java.util.function.DoubleSupplier;
  */
 public class PositionMechanism extends TestMechanism {
 
-    private final TunableNumber kG, cruise, accel;
+    private final TunableNumber kG, cruise, accel, jerk;
     private final TunableNumber presetA, presetB, jogStep, manualVolts, toleranceUnits;
 
     private final MotionMagicVoltage motionMagicRequest = new MotionMagicVoltage(0).withSlot(0).withEnableFOC(true);
@@ -45,6 +45,7 @@ public class PositionMechanism extends TestMechanism {
         kG     = configTunable("Gains/kG", cfg.kG);
         cruise = configTunable("MotionMagic/CruiseVel (" + u + " per s)", cfg.cruiseVelocity);
         accel  = configTunable("MotionMagic/Accel (" + u + " per s^2)", cfg.acceleration);
+        jerk   = configTunable("MotionMagic/Jerk (" + u + " per s^3, 0 = off)", cfg.jerk);
 
         double range = cfg.maxPosition - cfg.minPosition;
         presetA        = new TunableNumber(tune + "PresetA (" + u + ")",
@@ -79,7 +80,7 @@ public class PositionMechanism extends TestMechanism {
         // Motion Magic is in mechanism rotations / s because of SensorToMechanismRatio.
         c.MotionMagic.MotionMagicCruiseVelocity = toRot(cruise.get());
         c.MotionMagic.MotionMagicAcceleration = toRot(accel.get());
-        c.MotionMagic.MotionMagicJerk = toRot(cfg.jerk);
+        c.MotionMagic.MotionMagicJerk = toRot(Math.max(0.0, jerk.get()));
 
         c.SoftwareLimitSwitch.ForwardSoftLimitEnable = softLimitsEnabled;
         c.SoftwareLimitSwitch.ForwardSoftLimitThreshold = toRot(cfg.maxPosition);
