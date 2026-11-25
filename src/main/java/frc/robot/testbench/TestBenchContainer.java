@@ -12,6 +12,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StringPublisher;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -37,6 +38,7 @@ import java.util.function.Function;
  *  "TestBench/Controlling". Change it with the "TestBench/Mechanism" dropdown OR the bumpers.
  *
  *  RB / LB ...... next / previous mechanism (also moves the Elastic dropdown)
+ *                 rumble: short buzz = switched, long buzz = back at mechanism #1
  *  A ............ roller: run forward at TargetRPM   | position: go to Preset A
  *  Y ............ roller: run reverse                | position: go to Preset B
  *  B ............ STOP this mechanism (position: hold here) + clear its fault
@@ -105,12 +107,30 @@ public class TestBenchContainer {
     private final StringPublisher dropdownSelection = NetworkTableInstance.getDefault()
             .getStringTopic("/SmartDashboard/TestBench/Mechanism/selected").publish();
 
-    /** RB = +1 (next), LB = -1 (previous). Wraps around at the ends of the list. */
-    private void selectNext(int direction) {
+    /** RB = +1 (next), LB = -1 (previous). Wraps around at the ends of the list. @return new index */
+    private int selectNext(int direction) {
         int i = mechanisms.indexOf(selected());
-        TestMechanism next = mechanisms.get(Math.floorMod(i + direction, mechanisms.size()));
+        int nextIndex = Math.floorMod(i + direction, mechanisms.size());
+        TestMechanism next = mechanisms.get(nextIndex);
         dropdownSelection.set(next.getName()); // the dropdown is the one source of truth
         System.out.println("[TestBench] Controller now controls: " + next.getName());
+        return nextIndex;
+    }
+
+    /** Switch mechanism, then buzz the tester controller: short = switched, long = back at #1. */
+    private Command switchMechanism(int direction) {
+        return Commands.defer(() -> {
+            boolean atFirst = selectNext(direction) == 0;
+            return rumble(atFirst ? 0.5 : 0.15);
+        }, java.util.Set.of()).ignoringDisable(true).withName("Switch Mechanism");
+    }
+
+    private Command rumble(double seconds) {
+        return Commands.startEnd(
+                () -> tester.setRumble(RumbleType.kBothRumble, 0.7),
+                () -> tester.setRumble(RumbleType.kBothRumble, 0.0))
+            .withTimeout(seconds)
+            .ignoringDisable(true);
     }
 
     private TestMechanism selected() {
@@ -142,8 +162,8 @@ public class TestBenchContainer {
         onPress(tester.povDown(), m -> m.nudgeCommand(-1));
         onPress(tester.start().debounce(1.0), m -> m.runOnce(m::zeroHere).withName("Zero Here"));
         tester.back().onTrue(eStopCommand());
-        tester.rightBumper().onTrue(Commands.runOnce(() -> selectNext(+1)).ignoringDisable(true));
-        tester.leftBumper().onTrue(Commands.runOnce(() -> selectNext(-1)).ignoringDisable(true));
+        tester.rightBumper().onTrue(switchMechanism(+1));
+        tester.leftBumper().onTrue(switchMechanism(-1));
 
         // Triggers: runs while either trigger is pressed, stops when both are released.
         Trigger anyTrigger = tester.rightTrigger(0.05).or(tester.leftTrigger(0.05));
